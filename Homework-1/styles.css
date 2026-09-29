@@ -1,11 +1,27 @@
-/* Đảm bảo mọi phần tử điều hướng đều có đường viền focus rõ ràng, tránh bị mất tích (kẹt ẩn) */
-nav a:focus-visible,
-nav button:focus-visible {
+/* Trạng thái focus rõ ràng cho WCAG 2.2 AA */
+a:focus-visible,
+button:focus-visible {
     outline: 3px solid #2563eb;
     outline-offset: 2px;
 }
 
-/* Ẩn các nội dung không liên quan khỏi cây trợ năng khi menu phủ toàn màn hình mở */
-body.menu-open *:not(nav):not(nav *) {
-    inert: true; /* Hỗ trợ trình duyệt hiện đại chặn focus lọt ra ngoài */
+/* Skip link styling */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    z-index: 100;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Ẩn các phần tử ngoài menu khi menu mở (với hỗ trợ inert) */
+body.menu-open *:not(header):not(header *) {
+    inert: true;
 }

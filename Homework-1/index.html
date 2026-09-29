@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self';">
     <title>Production Portfolio</title>
-    <!-- Thêm CSS tại đây nếu cần, không sử dụng inline styles -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Skip-link để hỗ trợ điều hướng bằng bàn phím và trình đọc màn hình -->
+    <!-- Skip-link hỗ trợ điều hướng bàn phím -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <header>
         <nav aria-label="Main Navigation">
-            <ul>
+            <!-- Nút bật/tắt menu mobile được điều khiển hoàn toàn bằng addEventListener, không dùng onclick -->
+            <button id="menu-toggle" aria-expanded="false" aria-controls="primary-navigation">
+                Menu
+            </button>
+            <ul id="primary-navigation">
                 <li><a href="#main-content">Trang chủ</a></li>
                 <li><a href="#projects">Dự án</a></li>
                 <li><a href="#about">Giới thiệu</a></li>
@@ -24,12 +29,11 @@
     <main id="main-content" tabindex="-1">
         <section id="hero">
             <h1>Chào mừng đến với Portfolio của tôi</h1>
-            <p>Khám phá các dự án và kỹ năng kỹ thuật của tôi dưới góc nhìn chuẩn kiến trúc và khả năng tiếp cận.</p>
+            <p>Khám phá các dự án và kỹ năng kỹ thuật dưới góc nhìn chuẩn kiến trúc và khả năng tiếp cận.</p>
         </section>
 
         <section id="projects">
             <h2>Dự án tiêu biểu</h2>
-            <!-- Các bài tập/dự án sẽ được đặt ở đây -->
         </section>
 
         <section id="about">
@@ -41,5 +45,8 @@
     <footer>
         <p>&copy; 2026 Production Portfolio. All rights reserved.</p>
     </footer>
+
+    <!-- Gọi file JavaScript riêng biệt, tuân thủ Strict CSP -->
+    <script src="main.js" defer></script>
 </body>
 </html>
