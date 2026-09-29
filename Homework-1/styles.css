@@ -21,7 +21,26 @@ button:focus-visible {
     top: 0;
 }
 
-/* Ẩn các phần tử ngoài menu khi menu mở (với hỗ trợ inert) */
+/* Tối ưu hóa hiển thị hình ảnh để tuyệt đối tránh CLS */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Khung chứa ảnh định sẵn tỉ lệ để giữ chỗ layout */
+.hero-image-wrapper {
+    width: 400px;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.project-card img {
+    aspect-ratio: 12 / 7;
+    object-fit: cover;
+}
+
+/* Ẩn các phần tử ngoài menu khi menu mở */
 body.menu-open *:not(header):not(header *) {
     inert: true;
 }

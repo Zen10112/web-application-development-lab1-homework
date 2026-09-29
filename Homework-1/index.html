@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self';">
     <title>Production Portfolio</title>
+    <!-- Preload tài nguyên quan trọng để tăng tốc FCP/LCP -->
+    <link rel="preload" href="styles.css" as="style">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,7 +15,6 @@
 
     <header>
         <nav aria-label="Main Navigation">
-            <!-- Nút bật/tắt menu mobile được điều khiển hoàn toàn bằng addEventListener, không dùng onclick -->
             <button id="menu-toggle" aria-expanded="false" aria-controls="primary-navigation">
                 Menu
             </button>
@@ -30,10 +31,20 @@
         <section id="hero">
             <h1>Chào mừng đến với Portfolio của tôi</h1>
             <p>Khám phá các dự án và kỹ năng kỹ thuật dưới góc nhìn chuẩn kiến trúc và khả năng tiếp cận.</p>
+            
+            <!-- Hình ảnh ở màn hình đầu (LCP image): KHÔNG dùng lazy loading, khai báo rõ width/height để chống CLS -->
+            <div class="hero-image-wrapper">
+                <img src="hero-avatar.webp" alt="Ảnh chân dung đại diện" width="400" height="400" fetchpriority="high">
+            </div>
         </section>
 
         <section id="projects">
             <h2>Dự án tiêu biểu</h2>
+            <!-- Hình ảnh các dự án bên dưới: BẮT BUỘC dùng loading="lazy" và width/height -->
+            <div class="project-card">
+                <img src="project-thumb-1.webp" alt="Ảnh minh họa dự án 1" width="600" height="350" loading="lazy">
+                <h3>Dự án Web Audio Engine</h3>
+            </div>
         </section>
 
         <section id="about">
@@ -46,7 +57,6 @@
         <p>&copy; 2026 Production Portfolio. All rights reserved.</p>
     </footer>
 
-    <!-- Gọi file JavaScript riêng biệt, tuân thủ Strict CSP -->
     <script src="main.js" defer></script>
 </body>
 </html>
