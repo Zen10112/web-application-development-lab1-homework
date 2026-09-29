@@ -1,0 +1,11 @@
+/* Đảm bảo mọi phần tử điều hướng đều có đường viền focus rõ ràng, tránh bị mất tích (kẹt ẩn) */
+nav a:focus-visible,
+nav button:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* Ẩn các nội dung không liên quan khỏi cây trợ năng khi menu phủ toàn màn hình mở */
+body.menu-open *:not(nav):not(nav *) {
+    inert: true; /* Hỗ trợ trình duyệt hiện đại chặn focus lọt ra ngoài */
+}
