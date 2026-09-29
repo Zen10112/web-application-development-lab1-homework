@@ -1,24 +1,36 @@
-# AI Failure Mode Audit Report
+# AI Failure Mode Audit Report (Homework 3)
 
-Tài liệu này ghi lại 3 lỗi do AI tạo ra (AI-induced defects) đã được phát hiện, chẩn đoán và khắc phục trong quá trình kiểm tra mã nguồn cho bài tập Homework 3[cite: 2].
-
----
-
-## 1. Lỗi thứ nhất: Drift-Free Countdown Engine (Lỗi trôi thời gian do setInterval)
-* **Mô tả lỗi (Defect Description):** AI sử dụng hàm `setInterval` đơn thuần để thực hiện đếm ngược thời gian. Cách làm này gây ra hiện tượng trôi lệch thời gian (drift) đáng kể khi tab trình duyệt chuyển sang chế độ nền (background) hoặc do độ trễ thực thi vòng lặp của JavaScript.
-* **Phương pháp chẩn đoán (Diagnostic Method):** Kiểm tra qua `Git diff`[cite: 2] giữa các phiên bản commit hoặc đặt `DevTools breakpoint`[cite: 2] kết hợp với `console.time` để theo dõi độ lệch pha giữa thời gian thực và thời gian đếm ngược.
-* **Giải pháp đã refactor (Refactored Solution):** Chuyển đổi sang sử dụng mốc thời gian tuyệt đối dựa trên chuẩn `UTC ISO 8601`[cite: 2] và tính toán khoảng thời gian chênh lệch (`delta`) trực tiếp từ `Date.now()` cho mỗi chu kỳ cập nhật.
+Tài liệu này ghi lại 3 lỗi do AI tạo ra (AI-induced defects) trong quá trình xây dựng Resilient Landing Page, cùng với phương pháp chẩn đoán và giải pháp mã nguồn đã được kiểm chứng[cite: 2].
 
 ---
 
-## 2. Lỗi thứ hai: State-Machine Form (Lỗi quản lý trạng thái và rủi ro XSS)
-* **Mô tả lỗi (Defect Description):** AI xử lý trạng thái chuyển đổi của form bằng các biến cờ `boolean` rời rạc thay vì một máy trạng thái (state machine) chặt chẽ (`Idle -> Submitting -> Success/Error`)[cite: 2]. Thêm vào đó, AI sử dụng `innerHTML` để hiển thị phản hồi lỗi, tạo ra lỗ hổng bảo mật XSS tiềm ẩn[cite: 2].
-* **Phương pháp chẩn đoán (Diagnostic Method):** Kiểm tra lịch sử `Git diff`[cite: 2] tại các đoạn xử lý DOM và sử dụng `DevTools`[cite: 2] để kiểm tra việc gán chuỗi trực tiếp vào phần tử giao diện.
-* **Giải pháp đã refactor (Refactored Solution):** Thiết lập một mô hình State Machine rõ ràng cho luồng form và thay thế toàn bộ `innerHTML` bằng `textContent` để làm sạch input đầu vào, ngăn chặn hoàn toàn lỗ hổng XSS[cite: 2].
+## 1. Lỗi thứ nhất: Lỗi trôi thời gian đếm ngược (Drift-Free Countdown do setInterval thuần túy)
+
+* **Mô tả lỗi (Defect Description):** 
+  Khi được yêu cầu viết đồng hồ đếm ngược cho Slice 1, AI đã tự động sử dụng hàm `setInterval(..., 1000)` đơn thuần. Cách tiếp cận này gây ra hiện tượng trôi lệch thời gian (drift) tích lũy đáng kể do độ trễ thực thi của Event Loop trong JavaScript hoặc khi người dùng thu nhỏ/chuyển tab trình duyệt (background throttle).
+* **Phương pháp chẩn đoán (Diagnostic Method):** 
+  Sử dụng `Git diff inspection` để so sánh giữa phiên bản dùng `setInterval` thô và phiên bản thực tế, kết hợp đặt `DevTools breakpoint` để theo dõi sai lệch thời gian giữa mốc thực tế (`Date.now()`) và bộ đếm[cite: 2].
+* **Giải pháp đã refactor (Refactored Solution):** 
+  Xây dựng module `CountdownEngine` dựa trên mốc thời gian tuyệt đối chuẩn `UTC ISO 8601`[cite: 2], áp dụng thuật toán tự động tính toán độ trễ (`drift correction`) và điều chỉnh linh hoạt thời gian của `setTimeout` cho chu kỳ tiếp theo.
 
 ---
 
-## 3. Lỗi thứ ba: Double-Submit & Memory Leak (Lỗi gửi trùng lặp và rò rỉ bộ nhớ)
-* **Mô tả lỗi (Defect Description):** AI bỏ quên việc vô hiệu hóa nút bấm trong lúc request đang xử lý (dẫn đến lỗi gửi trùng lặp - double submit)[cite: 2] và đăng ký các sự kiện lắng nghe toàn cục mà không có cơ chế hủy, gây ra hiện tượng rò rỉ bộ nhớ (memory leak)[cite: 2].
-* **Phương pháp chẩn đoán (Diagnostic Method):** Sử dụng `DevTools breakpoint`[cite: 2] kết hợp công cụ Memory Heap Snapshot, đồng thời đối chiếu qua lệnh kiểm tra `Git diff`[cite: 2].
-* **Giải pháp đã refactor (Refactored Solution):** Bổ sung cờ chặn gửi trùng lặp ngay khi bắt đầu trạng thái `Submitting`[cite: 2] và sử dụng `AbortController` để dọn dẹp các sự kiện lắng nghe một cách sạch sẽ, triệt để.
+## 2. Lỗi thứ hai: Lỗi bảo mật XSS do sử dụng `innerHTML` để hiển thị dữ liệu form
+
+* **Mô tả lỗi (Defect Description):** 
+  Ở Slice 2 và Slice 3, AI xử lý việc phản hồi thông báo trạng thái của form bằng cách gán trực tiếp chuỗi thông báo (có chứa dữ liệu đầu vào của người dùng) thông qua thuộc tính `innerHTML`. Điều này mở ra lỗ hổng bảo mật XSS (Cross-Site Scripting) nghiêm trọng[cite: 2].
+* **Phương pháp chẩn đoán (Diagnostic Method):** 
+  Kiểm tra qua `Git diff inspection`[cite: 2] tại các dòng cập nhật DOM trong file xử lý form, hoặc kiểm tra bằng công cụ Security Tab của DevTools.
+* **Giải pháp đã refactor (Refactored Solution):** 
+  Loại bỏ hoàn toàn việc sử dụng `innerHTML` với dữ liệu thô. Chuyển sang sử dụng `textContent` kết hợp với hàm `sanitizeInput` qua DOM node để escape toàn bộ ký tự đặc biệt, đảm bảo an toàn tuyệt đối chống XSS[cite: 2].
+
+---
+
+## 3. Lỗi thứ ba: Lỗi gửi trùng lặp (Double-Submit) do thiếu mô hình quản lý trạng thái form
+
+* **Mô tả lỗi (Defect Description):** 
+  AI tạo form xử lý bất đồng bộ nhưng không khóa nút bấm (submit button) trong lúc request đang được gửi đi. Điều này dẫn đến lỗi người dùng click liên tục gây ra tình trạng gửi trùng lặp (double-submit) dữ liệu lên hệ thống và gây xung đột trạng thái[cite: 2].
+* **Phương pháp chẩn đoán (Diagnostic Method):** 
+  Sử dụng `DevTools breakpoint`[cite: 2] tại hàm xử lý sự kiện `submit` để quan sát hành vi người dùng click nhiều lần, kết hợp đối chiếu lịch sử `Git diff inspection`[cite: 2].
+* **Giải pháp đã refactor (Refactored Solution):** 
+  Triển khai mô hình máy trạng thái (State-Machine Form) rõ ràng qua các bước `Idle -> Submitting -> Success/Error`[cite: 2], trong đó tự động chuyển trạng thái `disabled = true` và đổi nhãn nút bấm ngay khi bước vào giai đoạn `Submitting`.
