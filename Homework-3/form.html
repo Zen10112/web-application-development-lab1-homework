@@ -1,0 +1,13 @@
+<!-- Tên file: form.html -->
+<form id="state-machine-form" data-state="idle">
+    <div class="form-group">
+        <label for="email">Địa chỉ Email:</label>
+        <input type="email" id="email" name="email" required placeholder="nhap@email.com">
+    </div>
+    
+    <!-- Nút bấm sẽ được quản lý trạng thái vô hiệu hóa tự động trong State Machine -->
+    <button type="submit" id="submit-btn">Gửi đăng ký</button>
+    
+    <!-- Khu vực hiển thị thông báo trạng thái -->
+    <div id="form-message" aria-live="polite"></div>
+</form>
